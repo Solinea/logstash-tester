@@ -2,17 +2,34 @@ FROM logstash:2.3.1
 
 RUN logstash-plugin install --development
 
-ARG LST
-ARG FILTER_CONFIG
-ARG PATTERN_CONFIG
-ARG FILTER_TESTS
-ARG PATTERN_TESTS
+# 
+# Build arguments not passed to container
+# 
+# TEST_SUITE_DIR                    path relative to Dockerfile
+# PATTERN_TARGET_DIR                full path to place grok patterns in docker image
 
-ADD $PATTERN_CONFIG /etc/logstash/patterns
-ADD $LST/test /test
-ADD $FILTER_CONFIG /test/spec/filter_config
-ADD $FILTER_TESTS /test/spec/filter_data
-ADD $PATTERN_TESTS /test/spec/pattern_data
+ARG TEST_SUITE_DIR=example
+ARG PATTERN_TARGET_DIR=/etc/logstash/patterns
+
+# 
+# Environment variables passed into running container
+# 
+# TEST_FILTER_SUBSET                path relative to TEST_SUITE_DIR/test/filters or leave empty
+# RUN_CONFIGTEST                    'true' or 'false'
+# TEST_TARGET                       'all', 'patterns', or 'filters'
+# FILTER_FILENAME_REGEX             regular expression to identify filter configuration files
+
+ENV TEST_FILTER_SUBSET= \ 
+    RUN_CONFIGTEST=true \ 
+    TEST_TARGET=all \
+    PATTERN_TARGET_DIR=${PATTERN_TARGET_DIR} \
+    FILTER_FILE_REGEX=*.filter.conf
+
+ADD test /test
+ADD $TEST_SUITE_DIR/config/conf.d /test/spec/filter_config
+ADD $TEST_SUITE_DIR/config/patterns $PATTERN_TARGET_DIR
+ADD $TEST_SUITE_DIR/test/filters /test/spec/filter_data
+ADD $TEST_SUITE_DIR/test/patterns /test/spec/pattern_data
 
 ENTRYPOINT ["/test/run-tests.sh"]
 # ENTRYPOINT ["bash"]

@@ -1,12 +1,12 @@
 #!/bin/bash
-if [[ $1 == "all" || $1 == "patterns" ]]; then
+if [[ $TEST_TARGET == "all" || $TEST_TARGET == "patterns" ]]; then
     echo "###  RUN PATTERN TESTS    #####################"
     rspec -f p /test/spec/patterns_spec.rb
 fi
 
-if [[ $1 == "all" || $1 == "filters" ]]; then
+if [[ $TEST_TARGET == "all" || $TEST_TARGET == "filters" ]]; then
     echo "###  RUN FILTER Tests  ####################"
-    if [[ $2 == "y" ]]; then
+    if [[ $RUN_CONFIGTEST == "true" ]]; then
         logstash --configtest -f /test/spec/filter_config
     fi
 

@@ -23,7 +23,7 @@ module GrokHelpers
   def build_grok(label)
     grok = LogStash::Filters::Grok.new("match" => ["message", "%{#{label}}"])
     # Manually set patterns_dir so that grok finds them when we're testing patterns
-    grok.patterns_dir = ["/etc/logstash/patterns"]
+    grok.patterns_dir = [ENV["PATTERN_TARGET_DIR"]]
     grok.register
     grok
   end

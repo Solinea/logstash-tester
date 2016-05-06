@@ -23,7 +23,7 @@ pattern_data.each do |data_file|
 
         # test for missing fields in match output
         missing = expected_fields.select { |f| not result_fields.include?(f) }
-        msg = "\nFields missing in pattern output: #{missing}\nComplete grok output: #{match_res}\n\n--"
+        msg = "pattern = #{pattern}\nFields missing in pattern output: #{missing}\nComplete grok output: #{match_res}\n\n--"
         expect(missing).to be_empty, msg
 
         # test for unexpected fields in match output
